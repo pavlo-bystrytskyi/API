@@ -38,20 +38,18 @@ class ApiControllerTest {
                              {
                                  "id": 1,
                                  "name": "John",
-                                 "status": "Alive",
                                  "species": "Human"
                              }
                              """,
                         MediaType.APPLICATION_JSON));
 
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/characters"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/characters/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("""                   
                              {
                                  "id": 1,
                                  "name": "John",
-                                 "status": "Alive",
                                  "species": "Human"
                              }
                         """));

@@ -8,10 +8,10 @@ import org.springframework.web.client.RestClient;
 @Service
 public class ApiService {
 
-    RestClient restClient;
+    private final RestClient restClient;
 
     public ApiService(RestClient.Builder clientBuilder) {
-        this.restClient = RestClient.builder().baseUrl("https://rickandmortyapi.com/api").build();
+        this.restClient = clientBuilder.baseUrl("https://rickandmortyapi.com/api").build();
     }
 
     public RickMortyApiResponse getAllCharacters() {
