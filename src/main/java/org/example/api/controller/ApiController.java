@@ -6,10 +6,9 @@ package org.example.api.controller;
 
 import org.example.api.dto.RickMortyApiResponse;
 import org.example.api.model.Character;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
@@ -39,4 +38,25 @@ public class ApiController {
 
         return response;
     }
+
+    @GetMapping("/status")
+    public List<Character> getCharactersWithStatus(@RequestParam String status) {
+        RestClient restClient = RestClient.builder().baseUrl("https://rickandmortyapi.com/api").build();
+        RickMortyApiResponse response = restClient.get().uri("/character?status={status}", status).retrieve().body(RickMortyApiResponse.class);
+        if (response == null || response.results() == null) {
+            throw new RuntimeException("Empty response");
+        }
+
+        return response.results();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> noSuchElementExceptionHandler(Exception exception) {
+        return new ResponseEntity<>(
+                exception.getMessage(),
+                HttpStatus.NOT_FOUND
+        );
+    }
 }
+
+
