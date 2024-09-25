@@ -142,4 +142,35 @@ class ApiControllerTest {
                         """));
     }
 
+    @Test
+    public void getSpeciesStatistic_getHumans() throws Exception {
+        mockServer.expect(requestTo("https://rickandmortyapi.com/api/character?species=human"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("""
+                                   {
+                                     "info": {
+                                       "count": 2
+                                     },
+                                     "results": [
+                                       {
+                                         "id": 1,
+                                         "name": "John",
+                                         "species": "Human"
+                                       },
+                                       {
+                                         "id": 2,
+                                         "name": "Jane",
+                                         "species": "Human"
+                                       }
+                                     ]
+                                   }
+                                """,
+                        MediaType.APPLICATION_JSON));
+
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/species-statistic?species=human"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("2"));
+    }
+
 }
