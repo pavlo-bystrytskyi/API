@@ -1,9 +1,5 @@
 package org.example.api.controller;
 
-//Write an endpoint that returns a Rick&Morty character. When you enter GET http://localhost:8080/api/characters/2 in Postman,
-// the character with ID 2 should be returned.
-//``{"id": 2, "name": "Rick Sanchez", "species": "Human"}
-
 import org.example.api.dto.RickMortyApiResponse;
 import org.example.api.model.Character;
 import org.springframework.http.HttpStatus;
@@ -14,10 +10,10 @@ import org.springframework.web.client.RestClient;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/characters")
+@RequestMapping("/api")
 public class ApiController {
 
-    @GetMapping
+    @GetMapping("/characters")
     public List<Character> getAllCharacters() {
         RestClient restClient = RestClient.builder().baseUrl("https://rickandmortyapi.com/api").build();
         RickMortyApiResponse response = restClient.get().uri("/character").retrieve().body(RickMortyApiResponse.class);
@@ -28,7 +24,7 @@ public class ApiController {
         return response.results();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/characters/{id}")
     public Character getCharacterById(@PathVariable String id) {
         RestClient restClient = RestClient.builder().baseUrl("https://rickandmortyapi.com/api").build();
         Character response = restClient.get().uri("/character/{id}", id).retrieve().body(Character.class);
@@ -39,7 +35,7 @@ public class ApiController {
         return response;
     }
 
-    @GetMapping("/status")
+    @GetMapping("/characters/status")
     public List<Character> getCharactersWithStatus(@RequestParam String status) {
         RestClient restClient = RestClient.builder().baseUrl("https://rickandmortyapi.com/api").build();
         RickMortyApiResponse response = restClient.get().uri("/character?status={status}", status).retrieve().body(RickMortyApiResponse.class);
@@ -48,6 +44,20 @@ public class ApiController {
         }
 
         return response.results();
+    }
+
+    @GetMapping("/species-statistic")
+    public int getSpeciesStatistic(@RequestParam String species) {
+        RestClient restClient = RestClient.builder().baseUrl("https://rickandmortyapi.com/api").build();
+        RickMortyApiResponse response = restClient.get()
+                .uri("/character?species={species}", species)
+                .retrieve()
+                .body(RickMortyApiResponse.class);
+        if (response == null || response.info() == null) {
+            throw new RuntimeException("Empty response");
+        }
+
+        return response.info().count();
     }
 
     @ExceptionHandler
