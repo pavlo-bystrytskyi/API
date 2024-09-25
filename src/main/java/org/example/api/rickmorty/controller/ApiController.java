@@ -1,33 +1,25 @@
 package org.example.api.rickmorty.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.example.api.rickmorty.dto.Character;
 import org.example.api.rickmorty.dto.RickMortyApiResponse;
-import org.example.api.rickmorty.model.Character;
+import org.example.api.rickmorty.service.ApiService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClient;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class ApiController {
 
-    @GetMapping("/characters")
-    public List<Character> getAllCharacters() {
-        RestClient restClient = RestClient.builder().baseUrl("https://rickandmortyapi.com/api").build();
-        RickMortyApiResponse response = restClient.get().uri("/character").retrieve().body(RickMortyApiResponse.class);
-        if (response == null || response.results() == null) {
-            throw new RuntimeException("Empty response");
-        }
-
-        return response.results();
-    }
+    private final ApiService apiService;
 
     @GetMapping("/characters/{id}")
     public Character getCharacterById(@PathVariable String id) {
-        RestClient restClient = RestClient.builder().baseUrl("https://rickandmortyapi.com/api").build();
-        Character response = restClient.get().uri("/character/{id}", id).retrieve().body(Character.class);
+        Character response = this.apiService.getCharacterById(id);
         if (response == null) {
             throw new RuntimeException("Empty response");
         }
@@ -35,10 +27,11 @@ public class ApiController {
         return response;
     }
 
-    @GetMapping("/characters/status")
-    public List<Character> getCharactersWithStatus(@RequestParam String status) {
-        RestClient restClient = RestClient.builder().baseUrl("https://rickandmortyapi.com/api").build();
-        RickMortyApiResponse response = restClient.get().uri("/character?status={status}", status).retrieve().body(RickMortyApiResponse.class);
+    @GetMapping("/characters")
+    public List<Character> getCharactersWithStatus(@RequestParam(required = false) String status) {
+        RickMortyApiResponse response = status != null
+                ? this.apiService.getCharactersWithStatus(status)
+                : this.apiService.getAllCharacters();
         if (response == null || response.results() == null) {
             throw new RuntimeException("Empty response");
         }
@@ -48,11 +41,7 @@ public class ApiController {
 
     @GetMapping("/species-statistic")
     public int getSpeciesStatistic(@RequestParam String species) {
-        RestClient restClient = RestClient.builder().baseUrl("https://rickandmortyapi.com/api").build();
-        RickMortyApiResponse response = restClient.get()
-                .uri("/character?species={species}", species)
-                .retrieve()
-                .body(RickMortyApiResponse.class);
+        RickMortyApiResponse response = this.apiService.getSpeciesStatistic(species);
         if (response == null || response.info() == null) {
             throw new RuntimeException("Empty response");
         }
