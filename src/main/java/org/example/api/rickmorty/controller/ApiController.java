@@ -1,7 +1,7 @@
-package org.example.api.controller;
+package org.example.api.rickmorty.controller;
 
-import org.example.api.dto.RickMortyApiResponse;
-import org.example.api.model.Character;
+import org.example.api.rickmorty.dto.RickMortyApiResponse;
+import org.example.api.rickmorty.model.Character;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

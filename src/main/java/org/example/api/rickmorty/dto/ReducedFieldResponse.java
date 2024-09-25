@@ -1,4 +1,4 @@
-package org.example.api.dto;
+package org.example.api.rickmorty.dto;
 
 public class ReducedFieldResponse {
 }
